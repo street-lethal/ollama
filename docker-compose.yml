@@ -1,0 +1,26 @@
+services:
+  app:
+    image: ollama/ollama
+    working_dir: /app
+    environment:
+      LANG: C.UTF-8
+    volumes:
+      - ./ollama:/root/.ollama
+      - /etc/group:/etc/group:ro
+    cap_drop:
+      - ALL
+    restart: unless-stopped
+
+  web:
+    image: ghcr.io/open-webui/open-webui:main
+    environment:
+      OLLAMA_BASE_URL: http://app:11434
+    volumes:
+      - ./open-webui:/app/backend/data
+    ports:
+      - 3000:8080
+    depends_on:
+      - app
+    cap_drop:
+      - ALL
+    restart: unless-stopped
